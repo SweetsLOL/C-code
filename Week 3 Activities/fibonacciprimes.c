@@ -11,7 +11,7 @@ int main(){
     int next;
     
 
-    printf("Please enter the number of terms for the Fibonacci series.\n");
+    printf("Please asddsadasdadsdsadsds enter the number of terms for the Fibonacci series.\n");
     scanf("%d", &term);
 
     printf("Among the first %d term(s) of Fibonacci series that are also prime numbers:\n", term);
