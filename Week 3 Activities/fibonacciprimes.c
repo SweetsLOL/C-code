@@ -29,7 +29,7 @@ int main(){
                 }
             }
             if(isPrime){
-                printf("Term: %d\n%d\n", i, number);
+                printf("Term: %d\n%d\n", i, current_number);
             }
         }
         next = x + y;
