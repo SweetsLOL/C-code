@@ -1,0 +1,86 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "SDL2_4_1",
+            "command": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "args": [
+                "-g",
+                "-IC:\\msys64\\mingw64\\include\\SDL2",
+                "-LC:\\msys64\\mingw64\\lib",
+                "4_1.c",
+                "-o",
+                "main4_1.exe",
+                "-lmingw32",
+                "-lSDL2main",
+                "-lSDL2",
+                "-lSDL2_ttf"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "SDL2_4_2",
+            "command": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "args": [
+                "-g",
+                "-IC:\\msys64\\mingw64\\include\\SDL2",
+                "-LC:\\msys64\\mingw64\\lib",
+                "4_2.c",
+                "-o",
+                "main4_2.exe",
+                "-lmingw32",
+                "-lSDL2main",
+                "-lSDL2",
+                "-lSDL2_ttf"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "SDL2_4_3",
+            "command": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "args": [
+                "-g",
+                "-IC:\\msys64\\mingw64\\include\\SDL2",
+                "-LC:\\msys64\\mingw64\\lib",
+                "4_3.c",
+                "-o",
+                "main4_3.exe",
+                "-lmingw32",
+                "-lSDL2main",
+                "-lSDL2",
+                "-lSDL2_ttf"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}
