@@ -11,7 +11,7 @@
 // Reduce the main function down to less than 50 lines of code
 
 void question1(){ //First question
-    printf("1. What does the == operator do?\n");
+    printf("1. What does the == operator do? fuvk\n");
     printf("(a) calculates an arithmetic solution.\n");
     printf("(b) assigns a value to a variable.\n");
     printf("(c) checks for equality\n(d) draws the '=' character\n");
