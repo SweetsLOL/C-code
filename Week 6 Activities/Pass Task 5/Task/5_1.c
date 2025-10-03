@@ -65,7 +65,7 @@ int main(int argc, char *args[])
 					int mouseX = event.motion.x;
     				int mouseY = event.motion.y;
 					
-					if(mouseX < ...)
+					//if(mouseX < ...)
 					// TODO: Complete this
 				}
 				break;
