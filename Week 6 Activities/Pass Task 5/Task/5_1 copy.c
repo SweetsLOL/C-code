@@ -31,6 +31,37 @@ void draw_button(const char *text, SDL_Renderer *renderer, TTF_Font *font, SDL_C
 	SDL_FreeSurface(surface);
 }
 
+void button_border(SDL_Renderer *renderer, TTF_Font *font, SDL_Color color)
+{
+	SDL_Rect btnBorder;
+	btnBorder.x = 51;
+	btnBorder.y = 51;
+	btnBorder.w = 101;
+	btnBorder.h = 51;
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderDrawRect(renderer, &btnBorder);
+}
+
+void mouse_coords_text(SDL_Renderer *renderer, TTF_Font* font, SDL_Color color) {
+	int x_coord;
+	int y_coord;
+	SDL_GetMouseState(&x_coord, &y_coord);
+	char coord[256];
+	sprintf(coord, "x=%d, y=%d", x_coord, y_coord);  
+
+	SDL_Surface *surface = TTF_RenderText_Solid(font, coord, color);
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+	int texW = 0, texH = 0;
+	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+
+	SDL_Rect dstrect = { 0, 250, texW, texH };
+	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+} 
+
 int main(int argc, char *args[])
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -44,7 +75,7 @@ int main(int argc, char *args[])
 
 	// Text Related
 	TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
-	SDL_Color color = {255, 255, 255};
+	SDL_Color color = {0, 255, 255};
 
 	// Application state
 	bool isRunning = true;
@@ -52,7 +83,8 @@ int main(int argc, char *args[])
 
 	//Animation state, should be outside the 	
 	bool wasClicked = false;
-
+	
+	
 	while (isRunning)
 	{
 		if (SDL_PollEvent(&event) > 0)
@@ -68,7 +100,7 @@ int main(int argc, char *args[])
 				if (event.button.button == SDL_BUTTON_LEFT)
 				{
 					int mouseX = event.motion.x;
-    				int mouseY = event.motion.y;
+   					int mouseY = event.motion.y;
 					printf("Mouse coordinate x - %d, y - %d\n", mouseX, mouseY);
 					
 					//if(mouseX < ...)
@@ -86,8 +118,8 @@ int main(int argc, char *args[])
 			}
 		}
 
-		// Draw black background
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		// Draw background
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
 
 		// Draw text
@@ -96,10 +128,29 @@ int main(int argc, char *args[])
 		else
 			draw_button("Click me", renderer, font, color);
 
+		int mouseX, mouseY;
+		SDL_GetMouseState(&mouseX, &mouseY);
+
+		bool hovering = false;
+	
+		if(mouseX > 50 && mouseX < 150 && mouseY > 50 && mouseY <100)
+			hovering = true;
+		else
+			hovering = false;
+
+		if(hovering){
+			button_border(renderer, font, color);
+		}
+
+
+		mouse_coords_text(renderer, font, color);
+
 		// Present Render to screen
 		SDL_RenderPresent(renderer);
 
 		SDL_Delay(100); // Delay 100 ms
+
+		
 	}
 
 	SDL_DestroyRenderer(renderer);
