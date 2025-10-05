@@ -148,7 +148,7 @@ int main(int argc, char *args[])
 		// Present Render to screen
 		SDL_RenderPresent(renderer);
 
-		SDL_Delay(100); // Delay 100 ms
+		SDL_Delay(10); // Delay 100 ms
 
 		
 	}
