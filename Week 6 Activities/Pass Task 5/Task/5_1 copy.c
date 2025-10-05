@@ -7,13 +7,18 @@
  * On click button, the button text should change from "Click me" to "Clicked" vice versa
  */
 
+ int x_rect = 50;
+ int y_rect = 50;
+ int w_rect= 100;
+ int h_rect = 50;
+
 void draw_button(const char *text, SDL_Renderer *renderer, TTF_Font *font, SDL_Color color)
 {
 	SDL_Rect btnRect;
-	btnRect.x = 50;
-	btnRect.y = 50;
-	btnRect.w = 100;
-	btnRect.h = 50;
+	btnRect.x = x_rect;
+	btnRect.y = y_rect;
+	btnRect.w = w_rect;
+	btnRect.h = h_rect;
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(renderer, &btnRect);
 
@@ -34,10 +39,10 @@ void draw_button(const char *text, SDL_Renderer *renderer, TTF_Font *font, SDL_C
 void button_border(SDL_Renderer *renderer, TTF_Font *font, SDL_Color color)
 {
 	SDL_Rect btnBorder;
-	btnBorder.x = 51;
-	btnBorder.y = 51;
-	btnBorder.w = 101;
-	btnBorder.h = 51;
+	btnBorder.x = x_rect;
+	btnBorder.y = y_rect;
+	btnBorder.w = w_rect;
+	btnBorder.h = h_rect;
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderDrawRect(renderer, &btnBorder);
 }
@@ -75,7 +80,7 @@ int main(int argc, char *args[])
 
 	// Text Related
 	TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
-	SDL_Color color = {0, 255, 255};
+	SDL_Color color = {255, 0, 0};
 
 	// Application state
 	bool isRunning = true;
@@ -105,9 +110,11 @@ int main(int argc, char *args[])
 					
 					//if(mouseX < ...)
 					// TODO: Complete this
-					if(mouseX > 50 && mouseX < 150 && mouseY > 50 && mouseY <100){
+					if(mouseX > x_rect && mouseX < (x_rect + 100) && mouseY > y_rect && mouseY < (y_rect + 50)){
 						printf("The button was clicked. \n");
 						wasClicked = true;
+						x_rect = rand() % 200;
+						y_rect = rand() % 250;
 					}else{
 						printf("The button was not clicked. \n");
 						wasClicked = false;
@@ -123,8 +130,9 @@ int main(int argc, char *args[])
 		SDL_RenderClear(renderer);
 
 		// Draw text
-		if(wasClicked)
+		if(wasClicked){
 			draw_button("Clicked", renderer, font, color);
+		}
 		else
 			draw_button("Click me", renderer, font, color);
 
@@ -133,7 +141,7 @@ int main(int argc, char *args[])
 
 		bool hovering = false;
 	
-		if(mouseX > 50 && mouseX < 150 && mouseY > 50 && mouseY <100)
+		if(mouseX > x_rect && mouseX < (x_rect + 100) && mouseY > y_rect && mouseY < (y_rect + 50))
 			hovering = true;
 		else
 			hovering = false;
