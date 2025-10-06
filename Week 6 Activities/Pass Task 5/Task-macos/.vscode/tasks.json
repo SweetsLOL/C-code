@@ -1,0 +1,31 @@
+{
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "SDL2",
+			"command": "/usr/bin/clang",
+			"args": [
+				"-g",
+				"5_1.c",
+				"-o",
+				"main.exe",
+				"-I/opt/homebrew/include",
+				"-L/opt/homebrew/lib",
+				"-lSDL2main",
+				"-lSDL2",
+				"-lSDL2_ttf"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	],
+	"version": "2.0.0"
+}
