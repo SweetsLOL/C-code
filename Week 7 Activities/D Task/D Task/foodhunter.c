@@ -175,18 +175,17 @@ void add_or_move_food(SDL_Renderer *renderer, Food *food_array, SDL_Texture **te
             if (food_array[i].available)
             {
 
-                if (rand() % 1000 < 5) //0.5% chance for a food to be selected every interval (0.5% every 50 MS) (~)
+                if (rand() % 1000 < 5 && SDL_GetTicks() - last_tick_smoke[i] >= DURATION_SMOKE_MS) //0.5% chance for a food to be selected every interval (0.5% every 50 MS) (~)
                 { 
                     last_tick_smoke[i] = SDL_GetTicks();
                 }
                 
-                if (SDL_GetTicks() - last_tick_smoke[i] >= DURATION_SMOKE_MS)
+                if (last_tick_smoke[i] != 0 && SDL_GetTicks() - last_tick_smoke[i] >= DURATION_SMOKE_MS)
                 {
-                    food_array[i].x += food_array[i].dir_x; 
-                    food_array[i].y += food_array[i].dir_y;
-                } else {
-                    food_array[i].dir_x = -5 + rand() % 10; 
-                    food_array[i].dir_y = -5 + rand() % 10;
+                    food_array[i].dir_x = -5 + rand() % 11;
+                    food_array[i].dir_y = -5 + rand() % 11;
+
+                    last_tick_smoke[i] = 0;
                 }
             }
 
