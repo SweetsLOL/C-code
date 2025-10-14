@@ -15,8 +15,6 @@
 #define DURATION_SMOKE_MS 750
 #define MAX_FOOD 8
 
-
-int randomFood;
 uint64_t last_tick_add;
 uint64_t last_tick_move;
 uint64_t last_tick_target;
