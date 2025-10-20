@@ -18,7 +18,7 @@
 uint64_t last_tick_add;
 uint64_t last_tick_move;
 uint64_t last_tick_target;
-uint64_t last_tick_smoke[MAX_FOOD] = {0};
+uint64_t last_tick_smoke[MAX_FOOD];
 
 typedef enum eatflag
 {
@@ -173,7 +173,7 @@ void add_or_move_food(SDL_Renderer *renderer, Food *food_array, SDL_Texture **te
             if (food_array[i].available)
             {
 
-                if (rand() % 1000 < 5 && SDL_GetTicks() - last_tick_smoke[i] >= DURATION_SMOKE_MS) //0.5% chance for a food to be selected every interval (0.5% every 50 MS) (~)
+                if (rand() % 1000 < 5 && SDL_GetTicks() - last_tick_smoke[i] >= DURATION_SMOKE_MS) //0.5% chance for a food to be selected every interval (0.5% every 50 MS) (~9.5% chance every second)
                 { 
                     last_tick_smoke[i] = SDL_GetTicks();
                 }
