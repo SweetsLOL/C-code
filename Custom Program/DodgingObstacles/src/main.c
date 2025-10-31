@@ -21,9 +21,9 @@ typedef enum {
     STATE_GAME_OVER
 } GameState;
 
-bool PointInRect(Vector2 p, Rectangle r) {
-    return (p.x >= r.x && p.x <= r.x + r.width &&
-            p.y >= r.y && p.y <= r.y + r.height);
+bool PointInRect(Vector2 player, Rectangle rect) {
+    return (player.x >= rect.x && player.x <= rect.x + rect.width &&
+            player.y >= rect.y && player.y <= rect.y + rect.height);
 }
 
 // Intersection test: segment vs segment
