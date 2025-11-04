@@ -6,149 +6,183 @@
 #define CELL_SIZE 30
 #define WINDOW_WIDTH 300
 #define WINDOW_HEIGHT 300
-#define ROWS WINDOW_WIDTH / CELL_SIZE
-#define COLS WINDOW_HEIGHT / CELL_SIZE
+#define ROWS WINDOW_HEIGHT / CELL_SIZE
+#define COLS WINDOW_WIDTH / CELL_SIZE
 
 typedef struct cell
 {
-	char id[3];
+    char id[3];
 
-	// have a pointer to the neighbouring cells
-	struct cell *north;
-	struct cell *south;
-	struct cell *east;
-	struct cell *west;
+    struct cell *north;
+    struct cell *south;
+    struct cell *east;
+    struct cell *west;
 
-	// record whether this cell is wall or a path
-	// default is a wall.
-	bool wall;
-	// this stops cycles - set when you travel through a cell
-	bool visited;
-	bool on_path;
+    bool wall;
+    bool visited;
+    bool on_path;
 } Cell;
+
 
 void initialised_cell(Cell cells[][COLS])
 {
-	for (int r = 0; r < ROWS; r++)
-	{
-		for (int c = 0; c < COLS; c++)
-		{
-			sprintf(cells[r][c].id, "%d%d", r, c);
-			cells[r][c].north = NULL;
-			cells[r][c].south = NULL;
-			cells[r][c].east = NULL;
-			cells[r][c].west = NULL;
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            sprintf(cells[r][c].id, "%d%d", r, c);
 
-			cells[r][c].wall = true;
-			cells[r][c].visited = false;
-			cells[r][c].on_path = false;
-		}
-	}
+            cells[r][c].wall = true;
+            cells[r][c].visited = false;
+            cells[r][c].on_path = false;
+
+            // Set neighbour pointers
+            cells[r][c].north = (r > 0) ? &cells[r - 1][c] : NULL;
+            cells[r][c].south = (r < ROWS - 1) ? &cells[r + 1][c] : NULL;
+            cells[r][c].west = (c > 0) ? &cells[r][c - 1] : NULL;
+            cells[r][c].east = (c < COLS - 1) ? &cells[r][c + 1] : NULL;
+        }
+    }
 }
+
 
 void draw_cells(SDL_Renderer *renderer, Cell cells[][COLS])
 {
-	for (int r = 0; r < ROWS; r++)
-	{
-		for (int c = 0; c < COLS; c++)
-		{
-			SDL_Rect rect;
-			rect.y = 30 * c;
-			rect.x = 30 * r;
-			rect.h = 30;
-			rect.w = 30;
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            SDL_Rect rect;
+            rect.x = c * CELL_SIZE;
+            rect.y = r * CELL_SIZE;
+            rect.w = CELL_SIZE;
+            rect.h = CELL_SIZE;
 
-			if (!cells[r][c].wall)
-			{
-				SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-				SDL_RenderFillRect(renderer, &rect);
-			}
-			else if (cells[r][c].on_path)
-			{
-				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-				SDL_RenderDrawRect(renderer, &rect);
-			}
-		}
-	}
+            if (cells[r][c].on_path)
+            {
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // red for path found
+                SDL_RenderFillRect(renderer, &rect);
+            }
+            else if (!cells[r][c].wall)
+            {
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // yellow for walkable
+                SDL_RenderFillRect(renderer, &rect);
+            }
+
+        }
+    }
 }
+
 
 void toggle_wall(int mouse_x, int mouse_y, Cell cells[][COLS])
 {
-	int row = mouse_x / CELL_SIZE;
-	int col = mouse_y / CELL_SIZE;
+    int col = mouse_x / CELL_SIZE;
+    int row = mouse_y / CELL_SIZE;
 
-	cells[row][col].wall = !cells[row][col].wall;
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS)
+    {
+        cells[row][col].wall = !cells[row][col].wall;
+    }
 }
 
 
-/**
- * start a recursive search for paths from the selected cell
- * it searches till it hits the East 'wall' then stops
- * it does not necessarily find the shortest path
- * 
- */
-void find_path(Cell target_cell, Cell cells[][COLS])
+bool find_path(Cell *cell)
 {
-	// TODO : HERE
+    if (cell == NULL || cell->wall || cell->visited)
+        return false;
+
+    cell->visited = true;
+
+    // Base case: reached the rightmost side
+    if (cell->east == NULL)
+    {
+        cell->on_path = true;
+        return true;
+    }
+
+    // Explore neighbours recursively (east, south, north, west)
+    if (find_path(cell->east) || find_path(cell->south) || find_path(cell->north) || find_path(cell->west))
+    {
+        cell->on_path = true;
+        return true;
+    }
+
+    return false;
 }
+
+
+void reset_search(Cell cells[][COLS])
+{
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            cells[r][c].visited = false;
+            cells[r][c].on_path = false;
+        }
+    }
+}
+
 
 int main(int argc, char *args[])
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Init(SDL_INIT_EVERYTHING);
 
-	SDL_Window *window = SDL_CreateWindow("Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300, 300, 0);
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_Window *window = SDL_CreateWindow("Maze",
+                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                          WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-	// Initialised cells
-	Cell cells[ROWS][COLS];
-	initialised_cell(cells);
+    Cell cells[ROWS][COLS];
+    initialised_cell(cells);
 
-	// Application state
-	bool isRunning = true;
-	SDL_Event event;
+    bool isRunning = true;
+    SDL_Event event;
 
-	while (isRunning)
-	{
-		if (SDL_PollEvent(&event) > 0)
-		{
-			switch (event.type)
-			{
-			// Handles OS "Exit" event
-			case SDL_QUIT:
-				isRunning = false;
-				break;
+    while (isRunning)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                isRunning = false;
+                break;
 
-			case SDL_MOUSEBUTTONDOWN:
-				int mouse_x = event.motion.x;
-				int mouse_y = event.motion.y;
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                int mouse_x = event.motion.x;
+                int mouse_y = event.motion.y;
+                int col = mouse_x / CELL_SIZE;
+                int row = mouse_y / CELL_SIZE;
 
-				if (event.button.button == SDL_BUTTON_LEFT)
-				{	
-					toggle_wall(mouse_x, mouse_y, cells);
-				}
-				// Missing code
-				// Call something here on right click to find path
-				//...
-				
-				
-				break;
-			}
-		}
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    toggle_wall(mouse_x, mouse_y, cells);
+                }
+                else if (event.button.button == SDL_BUTTON_RIGHT)
+                {
+                    // Only trigger if right-clicked on a yellow cell in first column
+                    if (!cells[row][col].wall && col == 0)
+                    {
+                        reset_search(cells);
+                        find_path(&cells[row][col]);
+                    }
+                }
+                break;
+            }
+            }
+        }
 
-		// Draw black background
-		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-		SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green background
+        SDL_RenderClear(renderer);
 
-		// Draw Cells
-		draw_cells(renderer, cells);
+        draw_cells(renderer, cells);
+        SDL_RenderPresent(renderer);
+    }
 
-		// Present Render to screen
-		SDL_RenderPresent(renderer);
-	}
-
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-
-	return 0;
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
 }

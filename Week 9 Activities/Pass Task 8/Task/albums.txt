@@ -1,5 +1,5 @@
 2
-Even Greater Hits
+aspdo
 Neil Diamond
 media/Greatesthits.jpg
 1
@@ -10,7 +10,7 @@ Soolaimon
 sounds/06-Soolaimon.wav
 Sweet Caroline
 sounds/20-Sweet_Caroline.wav
-EVEN GREATERRRRR HITS
+Test
 Westlife
 media/Coast_to_coast.jpg
 1
