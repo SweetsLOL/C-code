@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -74,7 +75,7 @@ void SaveHighScore(char *filename, float newScore) {
 
 int main(void)
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Triangle Dodge");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dodge!");
     SetTargetFPS(TARGET_FPS);
 
     GameState gameState = STATE_TITLE;
@@ -100,7 +101,7 @@ int main(void)
 
     PowerUp powerups[MAX_POWERUPS] = {0};
     float powerSpawnTimer = 0;
-    float powerSpawnRate = 8.0f;
+    float powerSpawnRate = 8;
 
     bool shieldActive = false;
     float shieldTimer = 0;
@@ -169,15 +170,21 @@ int main(void)
             // Player movement (inverted controls if active)
             float newPlayerX = playerX;
             if (!invertedActive) {
-                if (IsKeyDown(KEY_LEFT))  newPlayerX -= playerSpeed * deltaTime;
-                if (IsKeyDown(KEY_RIGHT)) newPlayerX += playerSpeed * deltaTime;
+                if (IsKeyDown(KEY_LEFT))  
+                    newPlayerX -= playerSpeed * deltaTime;
+                if (IsKeyDown(KEY_RIGHT)) 
+                    newPlayerX += playerSpeed * deltaTime;
             } else {
-                if (IsKeyDown(KEY_LEFT))  newPlayerX += playerSpeed * deltaTime;
-                if (IsKeyDown(KEY_RIGHT)) newPlayerX -= playerSpeed * deltaTime;
+                if (IsKeyDown(KEY_LEFT))  
+                    newPlayerX += playerSpeed * deltaTime;
+                if (IsKeyDown(KEY_RIGHT)) 
+                    newPlayerX -= playerSpeed * deltaTime;
             }
             
-            if (newPlayerX < PLAYER_SIZE) newPlayerX = PLAYER_SIZE;
-            if (newPlayerX > SCREEN_WIDTH - PLAYER_SIZE) newPlayerX = SCREEN_WIDTH - PLAYER_SIZE;
+            if (newPlayerX < PLAYER_SIZE) 
+                newPlayerX = PLAYER_SIZE;
+            if (newPlayerX > SCREEN_WIDTH - PLAYER_SIZE) 
+                newPlayerX = SCREEN_WIDTH - PLAYER_SIZE;
 
             // Triangle vertices
             Vector2 playerTip   = { playerX, playerY - PLAYER_SIZE };
@@ -227,6 +234,7 @@ int main(void)
             powerSpawnTimer += deltaTime;
             if (powerSpawnTimer >= powerSpawnRate) {
                 powerSpawnTimer = 0;
+                powerSpawnRate = GetRandomValue(4, 8);
                 for (int i = 0; i < MAX_POWERUPS; i++) {
                     if (!powerups[i].active) {
                         powerups[i].active = true;
@@ -281,6 +289,13 @@ int main(void)
                         if (survivalTime > highScore) {
                             highScore = survivalTime;
                             SaveHighScore(highscoreFile, highScore);
+
+                            if (strcmp(highscoreFile, "highscore_easy.txt") == 0)
+                                highScoreEasy = highScore;
+                            else if (strcmp(highscoreFile, "highscore_medium.txt") == 0)
+                                highScoreMedium = highScore;
+                            else if (strcmp(highscoreFile, "highscore_hard.txt") == 0)
+                                highScoreHard = highScore;
                         }
                     }
                     break;
@@ -357,15 +372,22 @@ int main(void)
 
         if (gameState == STATE_TITLE)
         {
-            DrawText("TRIANGLE DODGE", 240, 200, 40, WHITE);
+            DrawText("DODGE!", 310, 200, 40, WHITE);
             DrawText("Press ENTER", 310, 300, 20, YELLOW);
         }
         else if (gameState == STATE_STAGE_SELECT)
         {
+            char selectEasy[64];
+            char selectMedium[64];
+            char selectHard[64];
+            sprintf(selectEasy, "1 - Easy   (High Score: %.1fs)", highScoreEasy);
+            sprintf(selectMedium, "2 - Medium   (High Score: %.1fs)", highScoreMedium);
+            sprintf(selectHard, "3 - Hard   (High Score: %.1fs)", highScoreHard);
+
             DrawText("SELECT STAGE", 260, 120, 40, WHITE);
-            DrawText("1 - Easy",   330, 220, 30, GREEN);
-            DrawText("2 - Medium", 330, 270, 30, YELLOW);
-            DrawText("3 - Hard",   330, 320, 30, RED);
+            DrawText(selectEasy,   220, 220, 30, GREEN);
+            DrawText(selectMedium, 220, 270, 30, YELLOW);
+            DrawText(selectHard,   220, 320, 30, RED);
         }
         else if (gameState == STATE_GAMEPLAY)
         {
