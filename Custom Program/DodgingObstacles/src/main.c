@@ -15,7 +15,7 @@ typedef enum {
     OBSTACLE_FAST,
     OBSTACLE_WIDE,
     OBSTACLE_SMALL,
-    OBSTACLE_COLORFUL
+    OBSTACLE_DIAGONAL,
 } ObstacleType;
 
 typedef enum {
@@ -40,8 +40,9 @@ typedef enum {
 typedef struct {
     float x, y;
     float width, height;
-    float speed;
+    float speed_y;
     bool active;
+    float speed_x;
     ObstacleType type;
 } Obstacle;
 
@@ -206,14 +207,14 @@ int main(void)
                         obstacles[i].active = true; 
                         obstacles[i].x = GetRandomValue(0, SCREEN_WIDTH - 50);
                         obstacles[i].y = -50;
-                        obstacles[i].type = GetRandomValue(0, 4);
+                        obstacles[i].type = GetRandomValue(0, 3);
                         obstacles[i].width = 65;
                         obstacles[i].height = 20;
-                        obstacles[i].speed = 230 * difficultyMultiplier;
+                        obstacles[i].speed_y = 230 * difficultyMultiplier;
 
                         switch (obstacles[i].type) {
                             case OBSTACLE_FAST:  
-                                obstacles[i].speed *= 1.5f; 
+                                obstacles[i].speed_y *= 1.5f; 
                                 break;
                             case OBSTACLE_WIDE:  
                                 obstacles[i].width *= 1.8f; 
@@ -226,6 +227,22 @@ int main(void)
                                 break;
                         }
                         break;
+                    }
+                }
+                // ===== SPAWN OBSTACLES ===== (for hard mode, adds diagonally moving blocks)
+                if (spawnRate == 0.3f && GetRandomValue(0, 4) == 0) { 
+                    for (int j = 0; j < MAX_OBSTACLES; j++) {
+                        if (!obstacles[j].active) {
+                            obstacles[j].active = true;
+                            obstacles[j].x = GetRandomValue(0, SCREEN_WIDTH - 50);
+                            obstacles[j].y = -50;
+                            obstacles[j].width = 50;
+                            obstacles[j].height = 20;
+                            obstacles[j].speed_y = 200 * difficultyMultiplier;
+                            obstacles[j].speed_x = (GetRandomValue(0, 1) == 0) ? 150 : -150;
+                            obstacles[j].type = OBSTACLE_DIAGONAL;
+                            break;
+                        }
                     }
                 }
             }
@@ -250,8 +267,18 @@ int main(void)
 
             // ===== MOVE OBJECTS =====
             for (int i = 0; i < MAX_OBSTACLES; i++) {
-                if (obstacles[i].active) {
-                    obstacles[i].y += obstacles[i].speed * deltaTime;
+              if (obstacles[i].active) {
+                    if (obstacles[i].type == OBSTACLE_DIAGONAL) {
+                        obstacles[i].x += obstacles[i].speed_x * deltaTime;
+                        obstacles[i].y += obstacles[i].speed_y * deltaTime;
+
+                        // Bounce off screen edges
+                        if (obstacles[i].x <= 0 || obstacles[i].x + obstacles[i].width >= SCREEN_WIDTH)
+                            obstacles[i].speed_x *= -1;
+                    } else {
+                        obstacles[i].y += obstacles[i].speed_y * deltaTime;
+                    }
+                    
                     if (obstacles[i].y > SCREEN_HEIGHT)
                         obstacles[i].active = false;
                 }
@@ -424,6 +451,7 @@ int main(void)
                         case OBSTACLE_FAST:  color = ORANGE; break;
                         case OBSTACLE_WIDE:  color = BLUE;   break;
                         case OBSTACLE_SMALL: color = PURPLE; break;
+                        case OBSTACLE_DIAGONAL: color = DARKGREEN; break;
                         default: color = RED; break;
                     }
                     DrawRectangle(obstacles[i].x, obstacles[i].y,
