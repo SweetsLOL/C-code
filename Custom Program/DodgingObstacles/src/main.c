@@ -168,7 +168,7 @@ int main(void)
             float difficultyMultiplier = 1.0f + (survivalTime / 30.0f);
             if (difficultyMultiplier > 3.0f) difficultyMultiplier = 3.0f;
 
-            // Player movement (inverted controls if active)
+            // Player movement (inverted controls if inverted debuff is active)
             float newPlayerX = playerX;
             if (!invertedActive) {
                 if (IsKeyDown(KEY_LEFT))  
@@ -182,6 +182,7 @@ int main(void)
                     newPlayerX -= playerSpeed * deltaTime;
             }
             
+            // Prevent player from moving out of bounds
             if (newPlayerX < PLAYER_SIZE) 
                 newPlayerX = PLAYER_SIZE;
             if (newPlayerX > SCREEN_WIDTH - PLAYER_SIZE) 
@@ -230,7 +231,7 @@ int main(void)
                     }
                 }
                 // ===== SPAWN OBSTACLES ===== (for hard mode, adds diagonally moving blocks)
-                if (spawnRate == 0.3f && GetRandomValue(0, 4) == 0) { 
+                if (spawnRate == 0.3f && GetRandomValue(0, 4) == 0) { //20% chance for diagonally moving block to spawn
                     for (int j = 0; j < MAX_OBSTACLES; j++) {
                         if (!obstacles[j].active) {
                             obstacles[j].active = true;
