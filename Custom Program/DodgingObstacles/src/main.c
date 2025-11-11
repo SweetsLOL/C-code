@@ -171,14 +171,14 @@ int main(void)
             // Player movement (inverted controls if inverted debuff is active)
             float newPlayerX = playerX;
             if (!invertedActive) {
-                if (IsKeyDown(KEY_LEFT || KEY_A))  
+                if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))  
                     newPlayerX -= playerSpeed * deltaTime;
-                if (IsKeyDown(KEY_RIGHT || KEY_D)) 
+                if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) 
                     newPlayerX += playerSpeed * deltaTime;
             } else {
-                if (IsKeyDown(KEY_LEFT || KEY_A))  
+                if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))  
                     newPlayerX += playerSpeed * deltaTime;
-                if (IsKeyDown(KEY_RIGHT || KEY_D)) 
+                if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) 
                     newPlayerX -= playerSpeed * deltaTime;
             }
             
